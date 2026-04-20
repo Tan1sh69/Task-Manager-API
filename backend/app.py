@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from database import get_db, init_db
-from flask_cors import CORS  
+from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -41,7 +41,8 @@ def create_task():
 @app.route("/tasks/<int:task_id>", methods=["DELETE"])
 def delete_task(task_id):
     conn = get_db()
-    task = conn.execute("SELECT * FROM tasks WHERE id = ?", (task_id,)).fetchone()
+    task = conn.execute("SELECT * FROM tasks WHERE id = ?",
+                        (task_id,)).fetchone()
     if not task:
         conn.close()
         return jsonify({"error": "Task not found"}), 404
