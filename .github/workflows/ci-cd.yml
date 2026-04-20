@@ -1,0 +1,55 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+
+  # ── Job 1: Lint + Test ─────────────────────────
+  test:
+    name: Lint & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -r backend/requirements.txt
+          pip install flake8
+
+      - name: Lint with flake8
+        run: |
+          flake8 backend/app.py backend/database.py --max-line-length=100
+
+      - name: Run pytest tests
+        run: |
+          cd backend
+          pytest tests/ -v --tb=short
+
+  # ── Job 2: Docker Build ────────────────────────
+  docker-build:
+    name: Docker Build Check
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build backend Docker image
+        run: |
+          docker build -t task-manager-backend ./backend
+
+      - name: Build frontend Docker image
+        run: |
+          docker build -t task-manager-frontend ./frontend
