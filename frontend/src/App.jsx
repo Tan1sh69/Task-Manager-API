@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import "./App.css";
 
-const API = "http://localhost:5000";
+const API_URL = 'http://13.232.222.180:5000';
 
 function App() {
   const [tasks, setTasks] = useState([]);
@@ -13,7 +13,7 @@ function App() {
   // Fetch all tasks
   const fetchTasks = async () => {
     try {
-      const res = await axios.get(`${API}/tasks`);
+      const res = await axios.get(`${API_URL}/tasks`);
       setTasks(res.data);
     } catch (err) {
       setError("Failed to fetch tasks. Is Flask running?");
@@ -30,7 +30,7 @@ function App() {
     if (!title.trim()) return;
     setLoading(true);
     try {
-      await axios.post(`${API}/tasks`, { title });
+      await axios.post(`${API_URL}/tasks`, { title });
       setTitle("");
       fetchTasks();
     } catch (err) {
@@ -42,7 +42,7 @@ function App() {
   // Delete a task
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`${API}/tasks/${id}`);
+      await axios.delete(`${API_URL}/tasks/${id}`);
       fetchTasks();
     } catch (err) {
       setError("Failed to delete task.");
